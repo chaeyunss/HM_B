@@ -7,7 +7,7 @@ pragma solidity ^0.8.20;
 // 'MyToken'이라는 이름의 스마트 컨트랙트를 정의함.
 contract MyToken {
 
-    // --- 상태 변수: 컨트랙트의 영구적인 데이터를 저장하는 변수들 ---
+    // 컨트랙트의 영구적인 데이터를 저장하는 상태 변수들
 
     string public name; // 토큰의 전체 이름 (예: "My Token")을 저장할 변수. public으로 선언되어 외부에서 조회가 가능함.
     string public symbol; // 토큰의 심볼 (예: "MTK")을 저장할 변수.
@@ -22,15 +22,11 @@ contract MyToken {
     // 예: allowance[A][B] = 50 -> A는 B가 자신의 계좌에서 50만큼 빼가는 것을 허용함
     mapping(address => mapping(address => uint256)) public allowance;
 
-    // --- 이벤트: 블록체인에 로그를 남겨 외부에서 특정 동작이 발생했음을 감지하게 하는 기능 ---
-
     // 토큰이 전송될 때마다 발생하는 이벤트를 정의함. indexed로 선언되어 검색이 용이해짐.
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     // approve 함수가 성공적으로 호출될 때 발생하는 이벤트를 정의함.
     event Approval(address indexed owner, address indexed spender, uint256 value);
-
-    // --- 생성자(Constructor): 컨트랙트가 처음 배포될 때 단 한 번만 실행되는 특별한 함수 ---
 
     constructor(string memory _name, string memory _symbol, uint256 _initialSupply) {
         name = _name; // 배포 시 입력받은 인자(_name)로 토큰의 이름을 초기화함.
@@ -44,9 +40,8 @@ contract MyToken {
         emit Transfer(address(0), msg.sender, totalSupply);
     }
 
-    // --- 함수(Functions): 컨트랙트의 기능을 정의하는 코드 블록 ---
 
-    // '_to' 주소로 '_value' 만큼의 토큰을 전송하는 함수입니다.
+    // '_to' 주소로 '_value' 만큼의 토큰을 전송하는 함수.
     function transfer(address _to, uint256 _value) public returns (bool success) {
         // 함수를 호출한 사람(msg.sender)의 잔액이 보내려는 금액(_value)보다 크거나 같은지 확인. 그렇지 않으면 오류를 발생시키고 실행을 중단.
         require(balanceOf[msg.sender] >= _value, "ERC20: transfer amount exceeds balance");
@@ -62,11 +57,11 @@ contract MyToken {
 
     // '_spender' 주소에게 내 계좌에서 '_value' 만큼의 토큰을 인출할 수 있도록 허용(승인)하는 함수.
     function approve(address _spender, uint256 _value) public returns (bool success) {
-        // 허용량을 allowance 매핑에 기록합니다. (호출자[msg.sender]가 _spender에게 _value만큼 허용)
+        // 허용량을 allowance 매핑에 기록. (호출자[msg.sender]가 _spender에게 _value만큼 허용)
         allowance[msg.sender][_spender] = _value;
-        // Approval 이벤트를 발생시켜 승인 기록을 남깁니다.
+        // Approval 이벤트를 발생시켜 승인 기록을 남김.
         emit Approval(msg.sender, _spender, _value);
-        // 성공적으로 실행되었음을 나타내는 true를 반환합니다.
+        // 성공적으로 실행되었음을 나타내는 true를 반환.
         return true;
     }
 
